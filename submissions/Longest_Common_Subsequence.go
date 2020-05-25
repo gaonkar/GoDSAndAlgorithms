@@ -1,7 +1,9 @@
 /*
 Given two strings text1 and text2, return the length of their longest common subsequence.
 
-A subsequence of a string is a new string generated from the original string with some characters(can be none) deleted without changing the relative order of the remaining characters. (eg, "ace" is a subsequence of "abcde" while "aec" is not). A common subsequence of two strings is a subsequence that is common to both strings.
+A subsequence of a string is a new string generated from the original string with some characters(can be none)
+deleted without changing the relative order of the remaining characters. (eg, "ace" is a subsequence of "abcde"
+while "aec" is not). A common subsequence of two strings is a subsequence that is common to both strings.
 
 Constraints:
 
@@ -49,4 +51,39 @@ func longestCommonSubsequence(text1 string, text2 string) int {
         curr = make([]int, len(text1)+1)
     }
     return prev[len(text1)]
+}
+
+/*
+ Apparently, the for loop can be replaced with bin search. But really non-intuitive. Note how J is initialized to M each time
+*/
+func lengthOfLIS(nums []int) int {
+    L := len(nums)
+    if L == 0 { return 0}
+    P := make([]int, L)
+    S := make([]int, L+1)
+    LL:= make([]int, L)
+    j := 1
+    S[0] = 0
+    LL[0]=1
+    M := 0
+    for i := 1; i < L ; i++ {
+        j = M
+        for j >= 0 && nums[S[j]] >= nums[i] {j--}
+        j++
+        if j == 0 {
+            P[i]=i
+            LL[i] = 1
+        } else {
+            P[i] = S[j-1]
+            LL[i] = 1 + LL[P[i]]
+        }
+        S[j] = i
+        if M < j { M = j}
+        //fmt.Println(i,j, S, P, M)
+    }
+    fmt.Println(nums)
+    fmt.Println(S)
+    fmt.Println(P)
+    fmt.Println(LL)
+    return M+1
 }

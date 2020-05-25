@@ -22,6 +22,7 @@ func uniquePathsIter2(m int, n int) int {
 func uniquePaths(m int, n int) int {
     arr := make([][]int, m)
     arr[0] = make([] int, n)
+    //only 1 way to go in the row 0
     for j := 0; j < n; j++ {
         arr[0][j]=1
     }
