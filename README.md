@@ -1,2 +1,11 @@
 # GoLeetCode
-Solution to Leet CodeProblems in GoLang
+
+
+Algorithms:
+
+
+Data-Structures:
+
+
+submissions:
+My solution to Leet CodeProblems in GoLang
