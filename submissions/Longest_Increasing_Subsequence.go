@@ -22,7 +22,7 @@ func lengthOfLIS(nums []int) int {
     L := len(nums)
     if L == 0 {return 0}
     S = append(S, nums[0])
-    P := make([]int, L)
+    P := make([]int, L) // parent pointer
     P[0] = 1
     M := 0
     for i := 1;i < L; i++ {
