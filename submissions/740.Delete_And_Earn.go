@@ -55,3 +55,11 @@ func deleteAndEarn(nums []int) int {
 	}
 	return M
 }
+
+/*
+ In the group discussion, there is another solution where one converts this into
+ the robbing house problem
+ Since the value of nums 0 < 10k, allocate a 10k array
+ now for each C[nums[i]] += nums[i]
+ now run the house robbing algorithm on this new array
+ */
