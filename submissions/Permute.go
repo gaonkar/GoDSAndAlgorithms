@@ -1,3 +1,7 @@
+/*
+46: Permutation problem
+
+*/
 func permuteUnique(nums []int) [][]int {
     if len(nums) == 1 {
         return [][]int{nums}
@@ -5,7 +9,8 @@ func permuteUnique(nums []int) [][]int {
     var result [][]int
     dict := make(map[int] bool)
     for i,n := range nums {
-        if _,ok := dict[n]; ok {
+        _,ok := dict[n];
+        if ok {
                 continue
         }
         dict[n] = true
@@ -19,4 +24,3 @@ func permuteUnique(nums []int) [][]int {
     }
     return result
 }
-
