@@ -1,5 +1,6 @@
 /*
-Find the kth largest element in an unsorted array. Note that it is the kth largest element in the sorted order, not the kth distinct element.
+Find the kth largest element in an unsorted array. Note that it is the kth largest element in the
+sorted order, not the kth distinct element.
 
 Example 1:
 
@@ -18,8 +19,8 @@ You may assume k is always valid, 1 ≤ k ≤ array's length.
 // sol 1 heap
 import (
 	"container/heap"
-	"fmt"
 )
+
 // An IntHeap is a min-heap of ints.
 type IntHeap []int
 
@@ -40,45 +41,43 @@ func (h *IntHeap) Pop() interface{} {
 	return x
 }
 func findKthLargest(nums []int, k int) int {
-    h := &IntHeap{nums[0]}
+	h := &IntHeap{nums[0]}
 	heap.Init(h)
-    for _,x:= range(nums[1:]) {
-        heap.Push(h, x)
-        //fmt.Println(h)
-    }
-    for k > 1 {
-        //fmt.Printf("%d ", heap.Pop(h))
-        k--
-    }
-    return heap.Pop(h).(int)
+	for _, x := range nums[1:] {
+		heap.Push(h, x)
+		//fmt.Println(h)
+	}
+	for k > 1 {
+		//fmt.Printf("%d ", heap.Pop(h))
+		k--
+	}
+	return heap.Pop(h).(int)
 }
 
 // sol 2 quick select
 //standard Lomuto partition function
-//standard Lomuto partition function
 func Partition(nums []int) int {
-    L := len(nums)
-    p := nums[L-1]
-    j :=0
-    for i:=0;i< len(nums)-1; i++{
-        if nums[i] < p {
-            nums[i], nums[j] = nums[j], nums[i]
-            j++
-        }
-    }
-    nums[j], nums[L-1] = nums[L-1], nums[j]
-    return j
+	L := len(nums)
+	p := nums[L-1]
+	j := 0
+	for i := 0; i < len(nums)-1; i++ {
+		if nums[i] < p {
+			nums[i], nums[j] = nums[j], nums[i]
+			j++
+		}
+	}
+	nums[j], nums[L-1] = nums[L-1], nums[j]
+	return j
 }
 
-
 func findKthLargest(nums []int, k int) int {
-    L := len(nums)
-    P := Partition(nums)
-    K := L - P
-    if (K == k) {
-        return nums[P]
-    } else if K > k {
-        return findKthLargest(nums[P+1:], k)
-    }
-    return findKthLargest(nums[:P], k-K)
+	L := len(nums)
+	P := Partition(nums)
+	K := L - P
+	if K == k {
+		return nums[P]
+	} else if K > k {
+		return findKthLargest(nums[P+1:], k)
+	}
+	return findKthLargest(nums[:P], k-K)
 }

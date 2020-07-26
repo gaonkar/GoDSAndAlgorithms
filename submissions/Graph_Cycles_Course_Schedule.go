@@ -41,59 +41,98 @@ You may assume that there are no duplicate edges in the input prerequisites.
 
 */
 type Graph struct {
-    N int
-    V []int
-    AL []map[int] bool
+	N  int
+	D  []int
+	AL [][]int
 }
 
 func CreateGraph(Vn int, EL [][]int) *Graph {
-    var G Graph
-    G.N = Vn
-    G.V = make([]int, Vn)
-    G.AL = make([]map[int] bool, Vn)
-    for c:= 0; c < Vn; c++ {
-        G.AL[c] = make(map[int] bool)
-    }
-    for _,p := range(EL) {
-        //fmt.Println(Vn,p, G.AL[p[0]])
-        G.AL[p[0]][p[1]] = true
-    }
-    return &G
+	var G Graph
+	G.N = Vn
+	G.D = make([]int, Vn)
+	G.AL = make([][]int, Vn)
+	for c := 0; c < Vn; c++ {
+		G.AL[c] = make([]int, 0)
+	}
+	for _, p := range EL {
+		G.AL[p[1]] = append(G.AL[p[1]], p[0])
+		G.D[p[0]]++
+	}
+	return &G
 }
 
 func (this *Graph) DFSCycleFromVertex(v int, C []int) bool {
-    C[v] = 1 // visited
-    AL := this.AL[v] // Get the AL
-    for n:= range(AL) {
-        if C[n] == 1 {
-            return true
-        }
-        if C[n] == 0 && this.DFSCycleFromVertex(n, C) {return true}
-    }
-    C[v] = 2 //cycle
-    return false
+	C[v] = 1 // visited
+	AL := this.AL[v]
+	for _, n := range AL {
+		if C[n] == 1 {
+			return true
+		}
+		if C[n] == 0 && this.DFSCycleFromVertex(n, C) {
+			return true
+		}
+	}
+	C[v] = 2 //cycle
+	return false
 }
 
 func (this *Graph) HasCycles() bool {
-    color := make([]int, this.N) // 0 not visited, 1 visited, 2 cycle
+	color := make([]int, this.N) // 0 not visited, 1 visited, 2 cycle
 
-    for i:= range(color) {
-        //fmt.Println(i, color)
-        if color[i] == 0 {
-            if this.DFSCycleFromVertex(i, color)  {
-                return true
-            }
-        }
-    }
-    //fmt.Println(color)
-    return false
+	for i := range color {
+		//fmt.Println(i, color)
+		if color[i] == 0 {
+			if this.DFSCycleFromVertex(i, color) {
+				return true
+			}
+		}
+	}
+	//fmt.Println(color)
+	return false
 }
 
 func canFinish(N int, pq [][]int) bool {
-    G := CreateGraph(N,pq)
+	G := CreateGraph(N, pq)
 
-    //fmt.Println(G)
-    ret := G.HasCycles()
-    //fmt.Println(ret)
-    return !ret
+	//fmt.Println(G)
+	ret := G.HasCycles()
+	//fmt.Println(ret)
+	return !ret
+}
+
+/*
+210 Course Schedule 2
+*/
+
+func findOrder(numCourses int, prerequisites [][]int) (r []int) {
+	G := CreateGraph(numCourses, prerequisites)
+	//fmt.Println(G)
+	if G.HasCycles() {
+		return nil
+	}
+	V := make(map[int]bool)
+	// lets add all 0 dependent courses to our list
+
+	for true {
+		for i, x := range G.D {
+			if V[i] || x > 0 {
+				continue
+			}
+			V[i] = true
+			r = append(r, i)
+			for _, y := range G.AL[i] {
+				G.D[y]--
+			}
+		}
+		if len(V) == G.N {
+			for i, x := range G.D {
+				if !V[i] && x == 0 {
+					r = append(r, i)
+				}
+			}
+			break
+		}
+	}
+
+	return r
 }

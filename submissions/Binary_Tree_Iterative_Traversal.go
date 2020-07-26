@@ -195,3 +195,35 @@ func LT(root *TreeNode) *Node {
 	}
 	return root
 }
+
+/*
+BST Tree Iterator
+*/
+
+class BSTIterator:
+
+    def __init__(self, root: TreeNode):
+        self.stk=[]
+        self.GoLeft(root)
+
+    def GoLeft(self, root:TreeNode):
+        while root != None:
+            self.stk.append(root)
+            root = root.left
+
+    def next(self) -> int:
+        """
+        @return the next smallest number
+        """
+        ret = self.stk.pop()
+        if ret.right:
+            self.GoLeft(ret.right)
+        return ret.val
+
+
+    def hasNext(self) -> bool:
+        """
+        @return whether we have a next smallest number
+        """
+        #print(len(self.stk), self.current)
+        return len(self.stk) > 0
