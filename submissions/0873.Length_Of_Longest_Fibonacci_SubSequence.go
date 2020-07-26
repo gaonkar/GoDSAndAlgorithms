@@ -56,6 +56,7 @@ func lenLongestFibSubseq(arr []int) int {
         for j:= 0; j < i; j++ {
             num := arr[i] - arr[j]
             idx := M[num] - 1
+            //found the entry and it is smaller than arr[j]
             if idx >= 0 && num < arr[j] {
                 acc[j][i] = 1 + acc[idx][j]
                 ret = Max(ret, acc[j][i])
