@@ -1,7 +1,10 @@
 /*
 Given a collection of intervals, find the minimum number of intervals you need to remove to make the rest of the intervals non-overlapping.
 
-
+435 Non-overlapping Intervals <- very similar😈
+56 Merge Intervals <- very similar😈
+252 Meeting Rooms
+253 Meeting Rooms II
 
 Example 1:
 
@@ -27,21 +30,48 @@ Intervals like [1,2] and [2,3] have borders "touching" but they don't overlap ea
 
 */
 func eraseOverlapIntervals(I [][]int) (r int) {
-    sort.SliceStable(I, func(i, j int) bool {
-    return I[i][1] < I[j][1]})
+    sort.SliceStable(I, func(i, j int) bool { return I[i][1] < I[j][1]})
+    if len(I) < 1 {return 0}
     p := I[0]
     r = 0
     fmt.Println(I)
     for i:=1 ; i < len(I); i++ {
         //fmt.Println(p, I[i])
         if p[1] <= I[i][0] {
+            // we are not going to see any more overlaps for this interval, so lets move up
             p = I[i]
         } else {
+            // we found an overlap, lets account it
             r++
             if p[1] > I[i][1] {
+                // we are going to remove p from the list, so move to next entry
                 p = I[i]
             }
         }
+    }
+    return r
+}
+
+
+// Find Minimum arrows to shoot the balooons
+
+func findMinArrowShots(I [][]int) (r int) {
+    sort.SliceStable(I, func(i, j int) bool { return I[i][0] < I[j][0]})
+    if len(I) < 1 {return 0}
+    //fmt.Println(I)
+    end := I[0][1]
+    i := 1
+    r = 1
+    for i < len(I) {
+        //fmt.Println(end, I[i])
+        if end < I[i][0] {
+            // dont overlap, shoot the baloon
+            r++
+            end = I[i][1]
+        } else if end > I[i][1] {
+           end = I[i][1]
+        }
+        i++
     }
     return r
 }

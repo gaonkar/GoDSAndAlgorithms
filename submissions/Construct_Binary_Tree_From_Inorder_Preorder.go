@@ -62,3 +62,46 @@ func buildTree(P []int, I []int) *TreeNode {
     }
     return &r
 }
+def buildTree(self, preorder, inorder):
+    preorder.reverse()
+    inorder.reverse()
+    def build(stop):
+        print(preorder, inorder)
+        if inorder and inorder[-1] != stop:
+            root = TreeNode(preorder.pop())
+            root.left = build(root.val)
+            inorder.pop()
+            root.right = build(stop)
+            return root
+
+    return build(None)
+
+
+    // Deserializes your encoded data to tree.
+    func (this *Codec) deserialize(data string) *TreeNode {
+        if len(data) == 0 {return nil}
+        preorder := IntArr(data)
+        inorder := make([]int, len(preorder))
+        copy(inorder, preorder)
+        sort.Ints(inorder)
+        fmt.Println(inorder, preorder)
+        var BuildTree func(val int) *TreeNode
+
+        Reverse(inorder)
+        Reverse(preorder)
+        I := len(inorder)-1
+        P := len(preorder)-1
+        BuildTree = func(val int) *TreeNode {
+            if I < 0 {return nil}
+            if inorder[I] == val {return nil}
+            var root TreeNode
+            root.Val = preorder[P]
+            P--
+            root.Left = BuildTree(root.Val)
+            I--
+            root.Right = BuildTree(val)
+            return &root
+        }
+
+        return BuildTree(234324)
+    }

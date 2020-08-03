@@ -59,3 +59,25 @@ func grayCode(n int) []int {
     }
     return r
 }
+
+/*
+The Hamming distance between two integers is the number of positions at which the corresponding bits are different.
+
+Now your job is to find the total Hamming distance between all pairs of the given numbers.
+
+We can calculate hamming between each pair and then add them up. Or look at it column wise binary.
+*/
+
+func totalHammingDistance(nums []int) (r int) {
+    L := len(nums)
+    a := 1
+    for i:=0; i < 32; i++ {
+        s := 0
+        for _,x := range(nums) {
+            if x & a > 0 {s++}
+        }
+        r += (L-s)*s
+        a = a << 1
+    }
+    return r
+}

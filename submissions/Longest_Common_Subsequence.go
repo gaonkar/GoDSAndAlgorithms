@@ -87,3 +87,45 @@ func lengthOfLIS(nums []int) int {
     fmt.Println(LL)
     return M+1
 }
+
+/*
+Given two words word1 and word2, find the minimum number of steps required to make word1 and word2 the same, where in each step you can delete one character in either string.
+
+Example 1:
+Input: "sea", "eat"
+Output: 2
+Explanation: You need one step to make "sea" to "ea" and another step to make "eat" to "ea".
+Note:
+The length of given words won't exceed 500.
+Characters in given words can only be lower-case letters.
+*/
+
+func Min(x, y int) int{
+    if x < y {
+        return x
+    }
+    return y
+}
+
+
+func minDistance(text1 string, text2 string) int {
+    if len(text1) == 0 {return len(text2)}
+    if len(text2) == 0 {return len(text1)}
+
+    var curr = make([]int, len(text1)+1)
+    var prev = make([]int, len(text1)+1)
+    for j:=0; j <= len(text2); j++ {
+         for i:=0; i <= len(text1);i++ {
+            if i == 0 || j == 0 {
+                curr[i] = i + j
+            }else  if text1[i-1] == text2[j-1] {
+                curr[i] = prev[i-1]
+            } else {
+                curr[i] = Min(curr[i-1], prev[i]) + 1
+            }
+        }
+        prev = curr
+        curr=make([]int, len(text1)+1)
+    }
+    return prev[len(text1)]
+}

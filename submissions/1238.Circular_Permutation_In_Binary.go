@@ -25,24 +25,27 @@ Constraints:
 0 <= start < 2 ^ n
 */
 func Power(n int) int {
-    if n< 1 {return 1}
-    return 2 * Power(n-1)
+	if n < 1 {
+		return 1
+	}
+	return 2 * Power(n-1)
 }
 func grayCode(n int) []int {
-    N := Power(n)
-    r := make([]int, N)
-    if n==0 {return r}
-    r[1] = 1
-    n = 4;
-    for n <= N {
-        for i:=n/2; i < n;i++ {
-            r[i] = (n/2) | r[n-i-1]
-        }
-        n *=2
-    }
-    return r
+	N := Power(n)
+	r := make([]int, N)
+	if n == 0 {
+		return r
+	}
+	r[1] = 1
+	n = 4
+	for n <= N {
+		for i := n / 2; i < n; i++ {
+			r[i] = (n / 2) | r[n-i-1]
+		}
+		n *= 2
+	}
+	return r
 }
-
 
 func Reverse(nums []int) {
 	n := len(nums) - 1
@@ -52,23 +55,26 @@ func Reverse(nums []int) {
 	}
 }
 
-
-func rotateleft(nums []int, k int)  {
-    n := len(nums) - k
-    Reverse(nums)
-    Reverse(nums[:n])
-    Reverse(nums[n:])
+// cool reverse
+func rotateleft(nums []int, k int) {
+	n := len(nums) - k
+	Reverse(nums)
+	Reverse(nums[:n])
+	Reverse(nums[n:])
 }
 
-
 func circularPermutation(n int, start int) []int {
-    r := grayCode(n)
-    i := 0
-    for i < len(r) {
-        if start == r[i] {break}
-        i++
-    }
-    if i == len(r) {return r}
-    rotateleft(r, i)
-    return r
+	r := grayCode(n)
+	i := 0
+	for i < len(r) {
+		if start == r[i] {
+			break
+		}
+		i++
+	}
+	if i == len(r) {
+		return r
+	}
+	rotateleft(r, i)
+	return r
 }
