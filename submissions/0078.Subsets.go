@@ -75,3 +75,30 @@ func subsetsWithDup(nums []int) (r [][]int) {
 	helper([]int{}, 0)
 	return r
 }
+
+
+/* 491 Increasing subsequences
+Input: [4, 6, 7, 7]
+Output: [[4, 6], [4, 7], [4, 6, 7], [4, 6, 7, 7], [6, 7], [6, 7, 7], [7,7], [4,7,7]]
+
+Handling duplicates using generating function seems impossible to me. Used python as it has better support for sets
+*/
+class Solution:
+    def findSubsequences(self, nums: List[int]) -> List[List[int]]:
+        def helper(res, arr, nums, i):
+            if len(arr) > 1:
+                res.append(list(arr))
+            unique = {}
+            for k in range(i, len(nums)):
+                if i > 0 and nums[k] < nums[i-1]:
+                    continue
+                if nums[k] in unique:
+                    continue
+                arr.append(nums[k])
+                unique[nums[k]] = True
+                helper(res, arr, nums, k + 1)
+                arr.pop()
+
+        res = []
+        helper(res, [], nums, 0)
+        return res
