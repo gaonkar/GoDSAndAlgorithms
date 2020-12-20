@@ -69,3 +69,43 @@ func minimumDeleteSum(s1 string, s2 string) int {
     return MDS(s1, s2)
 }
 
+func Make2D(r,c, v int) [][] int {
+    ret := make([][]int, r)
+    for i:=0; i < len(ret); i++ {
+        ret[i] = make([]int, c)
+        if v > 0 {
+            for j := 0; j < c; j++ {
+                ret[i][j] = v
+            }
+        }
+    }
+    return ret
+}
+
+func Min(x, y int) int {
+    if x < y {return x}
+    return y
+}
+
+func minimumDeleteSum(s1 string, s2 string) int {
+    N1, N2 := len(s1), len(s2)
+    DP := Make2D(N1+1, N2+1, 0)
+    for i:=1; i < N1+1; i++ {
+        DP[i][0] = DP[i-1][0] + int(s1[i-1])
+    }
+    for i:=1; i < N2+1; i++ {
+        DP[0][i] = DP[0][i-1] + int(s2[i-1])
+    }
+    for i:=1; i < N1 + 1 ; i++ {
+        for j:=1; j < N2 + 1; j++ {
+            x,y := int(s1[i-1]), int(s2[j-1])
+            if x == y {
+                DP[i][j] = DP[i-1][j-1]
+            } else {
+                DP[i][j] = Min(x + DP[i-1][j], y + DP[i][j-1])
+            }
+        }
+    }
+    //fmt.Println(DP)
+    return DP[N1][N2]
+}
