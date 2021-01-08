@@ -105,3 +105,22 @@ def buildTree(self, preorder, inorder):
 
         return BuildTree(234324)
     }
+
+
+    func constructFromPrePost(pre []int, post []int) *TreeNode {
+        var helper func() *TreeNode
+        preIdx, postIdx := 0, 0
+        helper = func() *TreeNode {
+            root := &TreeNode{pre[preIdx], nil, nil}
+            preIdx++
+            if root.Val != post[postIdx] {
+                root.Left = helper()
+            }
+            if root.Val != post[postIdx] {
+                root.Right = helper()
+            }
+            postIdx++
+            return root
+        }
+        return helper()
+    }

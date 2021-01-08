@@ -20,15 +20,12 @@ Explanation: It could be decoded as "BZ" (2 26), "VF" (22 6), or "BBF" (2 2 6).
 */
 
 func numDecodings(s string) int {
-    arr := make([]int, 0)
+    arr := make([]int, 2)
     L := len(s)
     if L == 0 {return 0}
-    if s[0] == '0' {
-        arr = append(arr, 0)
-        arr = append(arr, 0)
-    } else {
-        arr = append(arr, 1)
-        arr = append(arr, 1)
+    if s[0] != '0' {
+        arr[0] = 1
+        arr[1] = 1
     }
     for i:=1 ; i < L; i++ {
         a := 0
