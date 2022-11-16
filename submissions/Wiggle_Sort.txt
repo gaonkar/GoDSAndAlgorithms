@@ -1,0 +1,175 @@
+/*
+Given an unsorted array nums, reorder it such that nums[0] < nums[1] > nums[2] < nums[3]....
+
+Example 1:
+
+Input: nums = [1, 5, 1, 1, 6, 4]
+Output: One possible answer is [1, 4, 1, 5, 1, 6].
+Example 2:
+
+Input: nums = [1, 3, 2, 2, 3, 1]
+Output: One possible answer is [2, 3, 1, 3, 1, 2].
+Note:
+You may assume all input has valid answer.
+
+Follow Up:
+Can you do it in O(n) time and/or in-place with O(1) extra space?
+
+My notes: Out of my league. The best I could do is sort and put them in right places :)
+
+*/
+Author: fun4leetcode
+
+Suppose the array is already "wiggly-sorted", we can divide the elements into two groups:
+
+odd group: those collected from elements with odd indices even group: those collected from elements with even indices
+And from the property of "wiggle-sort", we know every element in the odd group will be greater than its neighbor(s).
+But note this is only a local relation, i.e., for any element from the odd group, except for its neighbor(s), we have no
+idea about the relationship between it and those from the even group which are not its neighbors.
+
+This local relation makes it rather difficult to "wiggly-sort" all the elements from scratch. Fortunately there is a way
+to impose a global relation for elements in the two groups, specifically, for every "wiggly-sorted" array, it is
+possible to transform it into a new array such that every element in the odd group is no less than those in the even
+group while maintaining the "wiggle-sort" property. The proof is as follows.
+
+Suppose we have this element a from the odd group which are less than some element b from the even group, i.e., a < b.
+Let c, d be the two neighbors of a, and e, f be the two neighbors of b, from the "wiggle-sort" property, we have c < a,
+d < a and b < e, b < f. Now if we switch a and b, we still have c < b, d < b and a < e, a < f, therefore switching a and
+b won't break the "wiggle-sort" property but will transfer the larger element to the odd groupand the smaller element to
+the even group. After a finite sequence of switching, all elements in the odd group will be no less than those in the
+even group and we say the array has reached the global relation state (otherwise it's in the local relation state).
+
+Building a "wiggly-sorted" array in the global relation state is much more tractable than its local relation state
+counterpart. And it can be done in two steps:
+
+Partition: this will partition the array (with a total of n elements) into two groups which will be called S and L,
+respectively. The S group will have m (integer part of (n+1)/2) elements and the L group contains the rest. Also all
+elements in the L group is no less than those in the S group. (Note for this partition, S and L group will have the same
+number of elements as the even group and odd group, respectively. And the size of L group is no more than that of S
+group.)
+
+Placement: if all elements in the L group is greater than those in the S group, we can simply place elements in the L
+group at odd indices (thus form the odd group) and those in the S group at even indices (form the even group).  The
+tricky case is when there are overlapping (or equal) elements between the two groups, which will be dealt with as
+follows.
+
+First we prove that if the array can be "wiggly-sorted", the total number of such overlapping elements is no more than
+the size of the S group, which is m. Just assume we do have more such elements than m. After the array is
+"wiggly-sorted", all these elements can not be neighbors to each other (note they are equal). Therefore they will occupy
+either all the even indices or all the odd ones. However, even so we will still have residual such elements since the
+total number of even or odd indices is no more than m. And there is no way to place these excessive elements without
+breaking the "wiggle-sort" property.
+
+Second we show that if we arrange these overlapping elements in such a way that they will occupy the smallest even
+indices possible if they come from the S group and will take the largest odd indices possible if they are from the L
+group, then none of them will be neighbors of others. Let k1 and k2 be the total number of such elements in the S and L
+groups, respectively, and k = k1 + k2 is the total number of such elements in the array. First assume n is even, then we
+have k <= m = n/2. After the arrangement, the index of the last such element from S group will be 2 * (k1 - 1) while the
+index of the last one from the L group will be (n - 1) - 2 * (k2 - 1). If the former index is less than the latter by at
+least 1, then none of the elements will be neighbors of others, which is indeed the case: 2 * (k1 - 1) + 1 < (n - 1) - 2
+* (k2 - 1) <==> k1 + k2 < [n/2] + 1 and k1 + k2 = k <= n/2 = [n/2] < [n/2] + 1.  Now assume n is odd. If k = (n + 1)/2,
+  then the array can be "wiggly-sorted"only if k2 = 0, i.e., all such elements are in the S group and will take all the
+  even indices. Else we have k1 + k2 = k < (n + 1)/2 = [n/2] + 1. In either case, our arrangement will scatter the
+  overlapping elements in such a way that none of them will be neighbors of others.
+
+Once the overlapping elements are placed according to the above rules, all the other elements in S and L groups are free
+to take any of the remaining available even and odd indices, respectively. And we end up with a "wiggly-sorted" array
+that is in the "global relation" state.
+
+II -- O(nlogn) time and O(n) space solution by sorting
+
+The naive way to partition the array into L and S groups is by sorting. Here we can sort the elements in either
+ascending or descending order. For either case, we need to figure out the index mapping rules for the placement part.
+Let i be the index of an element before placement and j the index after, for ascending order, we haveumn -t
+
+j = 2 * (m - 1 - i) if i < m j = 2 * (n - 1 - i) + 1 if i >= m for descending order, the mapping rule can be combined
+into one expression: j = (2 * i + 1) % (n | 1).
+
+To avoid confusion for the index mapping process, we will use an auxiliary array serving as the array before index
+mapping and the input array as the array after index mapping. Here is the java program for ascending order:
+
+public void wiggleSort(int[] nums) { int n = nums.length, m = (n + 1) >> 1; int[] copy = Arrays.copyOf(nums, n);
+Arrays.sort(copy);
+
+    for (int i = m - 1, j = 0; i >= 0; i--, j += 2) nums[j] = copy[i]; for (int i = n - 1, j = 1; i >= m; i--, j += 2)
+    nums[j] = copy[i]; } III -- O(n) time and O(n) space solution by median partition
+
+Sorting the whole array is overkill for the partition part, since all we need are the S and L groups. As for elements
+within each group, we don't really care whether they are sorted or not. Suppose m_ele is the m-th smallest element in
+the array. We partition the array such that all elements less than m_ele go to its left and those greater than it end up
+in its right (or the other way around). After partition, the first m elements will form the S group while the rest will
+be the L group. To get the m-th smallest element, we will use the randomized quick-sort subroutine (refer to problem
+leetcode 215 for more details). All the three parts (obtaining the m-th smallest element, partition and placement) can
+be done in O(n) time, therefore the total time complexity will be O(n). And again we will use an extra array to simplify
+the index mapping process. Here is the java code:
+
+public void wiggleSort(int[] nums) { int n = nums.length, m = (n + 1) >> 1; int[] copy = Arrays.copyOf(nums, n); int
+median = kthSmallestNumber(nums, m);
+
+    for (int i = 0, j = 0, k = n - 1; j <= k;) { if (copy[j] < median) { swap(copy, i++, j++); } else if (copy[j] >
+    median) { swap(copy, j, k--); } else { j++; } }
+
+    for (int i = m - 1, j = 0; i >= 0; i--, j += 2) nums[j] = copy[i]; for (int i = n - 1, j = 1; i >= m; i--, j += 2)
+    nums[j] = copy[i]; }
+
+private int kthSmallestNumber(int[] nums, int k) { Random random = new Random();
+
+    for (int i = nums.length - 1; i >= 0; i--) { swap(nums, i, random.nextInt(i + 1)); }
+
+    int l = 0, r = nums.length - 1; k--;
+
+    while (l < r) { int m = getMiddle(nums, l, r);
+
+        if (m < k) { l = m + 1; } else if (m > k) { r = m - 1; } else { break; } }
+
+    return nums[k]; }
+
+private int getMiddle(int[] nums, int l, int r) { int i = l;
+
+    for (int j = l + 1; j <= r; j++) { if (nums[j] < nums[l]) swap(nums, ++i, j); }
+
+    swap(nums, l, i); return i; }
+
+private void swap(int[] nums, int i, int j) { int t = nums[i]; nums[i] = nums[j]; nums[j] = t; } IV -- O(n) time and
+O(1) space solution by combining partition and placement
+
+To have O(1) space, we have to drop the extra array. Then both the partition and placement will be done on the input
+array itself. If these two parts are carried out separately, i.e., placement is done after partition is completely
+finished, there will be no nice way to do the index mapping without keeping track of mapped and unmapped elements (as
+far as I know). It turns out the two parts can be combined into a single one.
+
+To see how, let's examine the whole partition and placement process more carefully. For partition, its core function is
+to subject each element in the array to the partition rule (i.e., compared with median) exactly once and distribute the
+element to the proper position based on the comparison result. Traditionally we will add it to either the left or right
+half of the array and deal with it later after the partition is over. This is of course unnecessary. The element should
+be ready for consumption (do whatever you like with it) once the distribution for it is over. We might as well map it to
+a new position according to the above placement rule (for example, j = (2 * i + 1) % (n | 1) for descending order),
+right before going to the next element. The traditional way of disposing the elements corresponds to the identity
+mapping (i.e., j = i).
+
+One important issue here for the index mapping is the order for traversing the array in the partition process. The
+traditional way of linear scan from left to right works well with the identity mapping, but obviously will violate the
+constraint that each element will be partitioned exactly once if the mapping takes the partitioned element to the
+unscanned area. The correct traversing order typically depends on the mapping we want to do. Here I prove that the
+partition constraint will not be violated if the mapping is bijective and the traversing order follows that of the
+linear scan but with the same mapping applied at each position.
+
+Each mapping f will be characterized by three parts: domain, codomain and mapping rules. For our case, both the domain
+and codomain will be the set S = [0, n) (i.e., integers from 0 up to n - 1). If f is bijective, we have:
+
+for any i1, i2 that belong to S, i1 != i2 <==> f(i1) != f(i2).  if i covers all the elements in S exactly once, f(i)
+will do the same.  If our traversing order follows that of the linear scan with f applied for each position i in the
+linear scan, the first property will guarantee each element will be visited at most once while the second will guarantee
+each element be visited at least once. Therefore, at the end each element will be visited exactly once.
+
+By the way, this index mapping idea is called "virtual index" in stefanpochmann's post and further explained in
+shuoshankou's post. I will follow the same notation for the index mapping function (which is called A here). We can do
+different mappings as needed. The following implementation is for descending order. And just for fun, a rotation mapping
+j = (i + k) % n will rotate the resulted array after partition, check it out! Anyway, here is the java code:
+
+public void wiggleSort(int[] nums) { int n = nums.length, m = (n + 1) >> 1; int median = kthSmallestNumber(nums, m);
+
+    for (int i = 0, j = 0, k = n - 1; j <= k;) { if (nums[A(j, n)] > median) { swap(nums, A(i++, n), A(j++, n)); } else
+    if (nums[A(j, n)] < median) { swap(nums, A(j, n), A(k--, n)); } else { j++; } } }
+
+private int A(int i, int n) { return (2 * i + 1) % (n | 1); }
